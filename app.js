@@ -4,8 +4,15 @@ var config = require('./config');
 
 var app = express();
 
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
-app.set('view engine', 'handlebars');
+app.disable('x-powered-by');
+
+hbs = exphbs.create({
+    defaultLayout: 'main',
+    extname: '.hbs'
+});
+
+app.engine('hbs', hbs.engine);
+app.set('view engine', 'hbs');
 
 app.set('port', process.env.PORT || config.port);
 
@@ -50,7 +57,7 @@ app.use(function(err, req, res, next){
 });
 
 app.listen(app.get('port'), function(){
-    console.log( 'Express listenning http://' + config.host + ':' + app.get('port'));
+    console.log( 'Express listenning ' + config.protocol + '://' + config.host + ':' + app.get('port'));
 });
 
 
