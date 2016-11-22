@@ -1,12 +1,18 @@
 var express = require('express');
 var exphbs = require('express-handlebars');
+var config = require('./config');
 
 var app = express();
 
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || config.port);
+
+app.use(function(req, res, next){
+    res.locals.showTests = app.get('env') !== 'production' && req.query.test === '1';
+    next();
+});
 
 app.get('/', function(req, res){
     res.render('home');
@@ -14,7 +20,18 @@ app.get('/', function(req, res){
 
 app.get('/about', function(req, res){
     var randomeFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
-    res.render('about', {fortune: randomeFortune});
+    res.render('about', {
+        fortune: randomeFortune,
+        pageTestScript: '/qa/test-about.js'
+    });
+});
+
+app.get('/tours/hood-river', function(req,res) {
+    res.render('tours/hood-river');
+});
+
+app.get('/tours/request-group-rate', function(req,res) {
+    res.render('tour/request-group-rate');
 });
 
 app.use(express.static(__dirname + '/public'));
@@ -33,7 +50,7 @@ app.use(function(err, req, res, next){
 });
 
 app.listen(app.get('port'), function(){
-    console.log( 'Express listenning http://localhost:' + app.get('port'));
+    console.log( 'Express listenning http://' + config.host + ':' + app.get('port'));
 });
 
 
