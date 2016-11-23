@@ -8,7 +8,14 @@ app.disable('x-powered-by');
 
 hbs = exphbs.create({
     defaultLayout: 'main',
-    extname: '.hbs'
+    extname: '.hbs',
+    helpers: {
+        section: function(name, options) {
+            if(!this._sections) this._sections = {};
+            this._sections[name] = options.fn(this);
+            return null;
+        }
+    }
 });
 
 app.engine('hbs', hbs.engine);
@@ -45,6 +52,19 @@ app.get('/tours/hood-river', function(req,res) {
 
 app.get('/tours/request-group-rate', function(req,res) {
     res.render('tour/request-group-rate');
+});
+
+app.get('/nursery-rhyme', function(req, res){
+    res.render('nursery-rhyme');
+});
+
+app.get('/data/nursery-rhyme', function(req, res){
+    res.json({
+        animal: 'бельчонок',
+        bodyPart: 'хвост',
+        adjective: 'пушистый',
+        noun: 'черт',
+    });
 });
 
 app.use(express.static(__dirname + '/public'));
