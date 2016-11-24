@@ -3,6 +3,7 @@ var exphbs = require('express-handlebars');
 var config = require('./config');
 var formidable = require('formidable');
 var jqupload = require('jquery-file-upload-middleware' );
+var credentials = require('./credentials');
 
 var app = express();
 
@@ -25,6 +26,13 @@ app.set('view engine', 'hbs');
 
 app.set('port', process.env.PORT || config.port);
 
+app.use(require('cookie-parser')(credentials.cookieSecret));
+app.use(require('express-session')({
+    resave: false,
+    saveUninitialized: false,
+    secret: credentials.cookieSecret,
+}));
+
 app.use(function(req, res, next){
     res.locals.showTests = app.get('env') !== 'production' && req.query.test === '1';
     next();
@@ -35,6 +43,16 @@ app.use(function(req, res, next){
     res.locals.partials.weatherContext = getWeatherData();
     next();
 });
+
+
+app.use(function(req, res, next){
+    // Если имеется экстренное сообщение,
+    // переместим его в контекст, а затем удалим
+    res.locals.flash = req.session.flash;
+    delete req.session.flash;
+    next();
+});
+
 
 app.get('/newsletter', function(req, res) {
     res.render('newsletter', {csrf: 'CSRF token goes here'});

@@ -1,4 +1,14 @@
+header h3 {
+    float: right;
+    margin-top: 30px;
+    padding-right: 25%;
+}
 
+header img {
+    width: 15%;
+    height: 15%;
+    margin: 0 auto;
+}
 .btn-file {
     position: relative;
     overflow: hidden;
