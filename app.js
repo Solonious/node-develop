@@ -1,3 +1,4 @@
+var http = require('http');
 var express = require('express');
 var exphbs = require('express-handlebars');
 var config = require('./config');
@@ -5,11 +6,36 @@ var formidable = require('formidable');
 var jqupload = require('jquery-file-upload-middleware' );
 var credentials = require('./credentials');
 var compress = require('compression');
-var morgan = require('morgan');
+// var morgan = require('morgan');
+var nodemailer = require('nodemailer');
+
+var mailTransport = nodemailer.createTransport('SMTP',{
+    service: 'Gmail',
+    auth: {
+        user: credentials.gmail.user,
+        pass: credentials.gmail.password,
+    }
+});
 
 var app = express();
 
-app.use(morgan('combined'));
+switch(app.get('env')){
+    case 'development':
+    // сжатое многоцветное журналирование для
+    // разработки
+    app.use(require('morgan')('dev'));
+        break;
+    case 'production':
+    // модуль 'express-logger' поддерживает ежедневное
+    // чередование файлов журналов
+    app.use(require('express-logger')({
+        path: __dirname + '/log/requests.log'
+    }));
+        break;
+}
+
+
+// app.use(morgan('combined'));
 
 app.disable('x-powered-by');
 
@@ -59,6 +85,12 @@ app.use(function(req, res, next){
 });
 
 app.use(compress());
+
+
+// app.use(function(req,res,next){
+//     var cluster = require('cluster');
+//     if(cluster.isWorker) console.log('Исполнитель %d получил запрос', cluster.worker.id);
+// });
 
 app.get('/newsletter', function(req, res) {
     res.render('newsletter', {csrf: 'CSRF token goes here'});
@@ -135,6 +167,38 @@ app.post('/process', function(req, res){
     }
 });
 
+app.post('/cart/checkout', function(req, res){
+    var cart = req.session.cart;
+    if(!cart) next(new Error('Корзина не существует.'));
+    var name = req.body.name || '',
+        email = req.body.email || '';
+    // Проверка вводимых данных
+    if(!email.match(VALID_EMAIL_REGEX))
+        return res.next(new Error('Некорректный адрес         электронной '+'почты.'));
+    // Присваиваем случайный идентификатор корзины;
+    // При обычных условиях мы бы использовали
+    // здесь идентификатор из БД
+    cart.number = Math.random().toString().replace(/^0\.0*/, '');
+    cart.billing = {
+        name: name,
+        email: email,
+    };
+    res.render('email/cart-thank-you', { layout: null, cart: cart }, function(err,html){
+        if( err ) console.log('ошибка в шаблоне письма');
+        mailTransport.sendMail({
+            from: '"Meadowlark Travel": info@meadowlarktravel.com',
+            to: cart.billing.email,
+            subject: 'Спасибо за заказ поездки' + 'в Meadowlark',
+            html: html,
+            generateTextFromHtml: true
+        }, function(err){
+            if(err) console.error('Не могу отправить подтверждение: ' + err.stack);
+        });
+    }
+    );
+    res.render('cart-thank-you', { cart: cart });
+});
+
 
 app.use('/upload', function(req, res, next){
     var now = Date.now();
@@ -164,10 +228,10 @@ app.use(function(err, req, res, next){
     res.render('500');
 });
 
-app.listen(app.get('port'), function(){
-    console.log( 'Express listenning ' + config.protocol + '://' + config.host + ':' + app.get('port'));
+app.use(function(err, req, res, next){
+    console.error(err.stack);
+    app.status(500).render('500');
 });
-
 
 var fortunes = [
     "Победи свои страхи, или они победят тебя.",
@@ -204,4 +268,22 @@ function getWeatherData(){
         ],
     };
 
+}
+
+var server;
+
+function startServer() {
+    server = http.createServer(app).listen(app.get('port'), function(){
+        console.log( 'Express started in ' + app.get('env') +
+            ' mode on http://localhost:' + app.get('port') +
+            '; press Ctrl-C to terminate.' );
+    });
+}
+
+if(require.main === module){
+    // application run directly; start app server
+    startServer();
+} else {
+    // application imported as a module via "require": export function to create server
+    module.exports = startServer;
 }
