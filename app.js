@@ -2,6 +2,7 @@ var express = require('express');
 var exphbs = require('express-handlebars');
 var config = require('./config');
 var formidable = require('formidable');
+var jqupload = require('jquery-file-upload-middleware' );
 
 var app = express();
 
@@ -109,6 +110,20 @@ app.post('/process', function(req, res){
         res.redirect(303, '/thank-you' );
     }
 });
+
+
+app.use('/upload', function(req, res, next){
+    var now = Date.now();
+    jqupload. fileHandler({
+        uploadDir: function(){
+            return __dirname + '/public/uploads/' + now;
+        },
+        uploadUrl: function(){
+            return '/uploads/' + now;
+        },
+    })(req, res, next);
+});
+
 
 app.use(express.static(__dirname + '/public'));
 
