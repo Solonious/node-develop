@@ -4,10 +4,15 @@ var config = require('./config');
 var formidable = require('formidable');
 var jqupload = require('jquery-file-upload-middleware' );
 var credentials = require('./credentials');
+var compress = require('compression');
+var morgan = require('morgan');
 
 var app = express();
 
+app.use(morgan('combined'));
+
 app.disable('x-powered-by');
+
 
 hbs = exphbs.create({
     defaultLayout: 'main',
@@ -53,6 +58,7 @@ app.use(function(req, res, next){
     next();
 });
 
+app.use(compress());
 
 app.get('/newsletter', function(req, res) {
     res.render('newsletter', {csrf: 'CSRF token goes here'});
