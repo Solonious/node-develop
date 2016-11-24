@@ -8,3 +8,5 @@ How to install:
 - cd node-develop
 - install dependencies npm install
 - Run server npm start
+
+Original repositoty https://github.com/loshirleyve/EthanRBrownExpress
