@@ -274,10 +274,6 @@ app.use(function(err, req, res, next){
     res.render('500');
 });
 
-app.use(function(err, req, res, next){
-    console.error(err.stack);
-    app.status(500).render('500');
-});
 
 var fortunes = [
     "Победи свои страхи, или они победят тебя.",
