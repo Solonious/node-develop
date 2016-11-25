@@ -111,10 +111,16 @@ app.use(function(req, res, next){
 
 app.use(function(req, res, next){
     if(!res.locals.partials) res.locals.partials = {};
-    res.locals.partials.weatherContext = getWeatherData();
+    res.locals.partials.articleContext = getArticleData();
+    res.locals.partials.postContext = getPostData();
     next();
 });
 
+app.use(function(req, res, next){
+    if(!res.locals.partials) res.locals.partials = {};
+
+    next();
+});
 
 app.use(function(req, res, next){
     // Если имеется экстренное сообщение,
@@ -126,11 +132,22 @@ app.use(function(req, res, next){
 
 app.use(compress());
 
+app.get(['/', '/login'], function(req, res) {
+    res.render('login');
+});
 
-// app.use(function(req,res,next){
-//     var cluster = require('cluster');
-//     if(cluster.isWorker) console.log('Исполнитель %d получил запрос', cluster.worker.id);
-// });
+app.get('/home', function(req, res){
+    res.render('home');
+});
+
+
+app.get('/about', function(req, res){
+    var randomeFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+    res.render('about', {
+        fortune: randomeFortune,
+        pageTestScript: '/qa/test-about.js'
+    });
+});
 
 app.get('/newsletter', function(req, res) {
     res.render('newsletter', {csrf: 'CSRF token goes here'});
@@ -144,17 +161,6 @@ app.post('/process', function(req, res) {
     res.redirect(303, '/thank-you' );
 });
 
-app.get('/', function(req, res){
-    res.render('home');
-});
-
-app.get('/about', function(req, res){
-    var randomeFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
-    res.render('about', {
-        fortune: randomeFortune,
-        pageTestScript: '/qa/test-about.js'
-    });
-});
 
 app.get('/tours/hood-river', function(req,res) {
     res.render('tours/hood-river');
@@ -281,33 +287,57 @@ var fortunes = [
     "Будь проще везде, где только можно.",
 ];
 
-function getWeatherData(){
+function getArticleData() {
     return {
-        locations: [
+        articles: [
             {
-                name: 'Портленд',
-                forecastUrl: 'http://www.wunderground.com/US/OR/Portland.html',
-                iconUrl: 'http://icons-ak.wxug.com/i/c/k/cloudy.gif',
-                weather: 'Сплошная облачность ',
-                temp: '54.1 F (12.3 C)',
+                image: 'img/js_file_encr.jpg',
+                heading: 'Encryption App',
+                titleDiscription: 'Title description',
+                publicDate: 'April 7, 2014',
+                text: 'Mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at. Phasellus sed ultricies mi non congue ullam corper. Praesent tincidunt sed tellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla.',
+                fullText: ''
             },
             {
-                name: 'Бенд',
-                forecastUrl: 'http://www.wunderground.com/US/OR/Bend.html',
-                iconUrl: 'http://icons-ak.wxug.com/i/c/k/partlycloudy.gif',
-                weather: 'Малооблачно',
-                temp: '55.0 F (12.8 C)',
+                image: 'img/learning-react-real-time-node.png',
+                heading: 'Build a real time app',
+                titleDiscription: 'Title description',
+                publicDate: 'April 2, 2014',
+                text: 'Mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at. Phasellus sed ultricies mi non congue ullam corper. Praesent tincidunt sed tellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla.',
+                fullText: ''
             },
             {
-                name: 'Манзанита',
-                forecastUrl: 'http://www.wunderground.com/US/OR/Manzanita.html',
-                iconUrl: 'http://icons-ak.wxug.com/i/c/k/rain.gif',
-                weather: 'Небольшой дождь',
-                temp: '55.0 F (12.8 C)',
-            },
-        ],
-    };
+                image: 'img/js_2.jpg',
+                heading: 'Encryption App',
+                titleDiscription: 'Title description',
+                publicDate: 'April 7, 2014',
+                text: 'Mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at. Phasellus sed ultricies mi non congue ullam corper. Praesent tincidunt sed tellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla.',
+                fullText: ''
+            }
+        ]
+    }
+}
 
+function getPostData() {
+    return {
+        posts: [
+            {
+                image: '/img/js_cube.jpg',
+                heading: 'Some info about ES7',
+                description: 'Sed mattis nunc'
+            },
+            {
+                image: '/img/js_cube.jpg',
+                heading: 'Some info about ES7',
+                description: 'Sed mattis nunc'
+            },
+            {
+                image: '/img/js_cube.jpg',
+                heading: 'Some info about ES7',
+                description: 'Sed mattis nunc'
+            }
+        ]
+    }
 }
 
 var server;

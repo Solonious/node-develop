@@ -34,7 +34,7 @@
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js">
  </head>
       <body>
-      	<header>
+      	<header id="home">
       		<!-- Navbar (sit on top) -->
             <div class="w3-top">
               <ul class="w3-navbar" id="myNavbar">
@@ -43,7 +43,7 @@
                     <i class="fa fa-bars"></i>
                   </a>
                 </li>
-                <li class="w3-left-align"><a href="#home">HOME</a></li>
+                <li class="w3-left-align"><a href="/home">HOME</a></li>
                 <li class="w3-hide-small"><a href="#about"><i class="fa fa-user"></i> ABOUT</a></li>
                 <li class="w3-hide-small"><a href="#portfolio"><i class="fa fa-th"></i> PORTFOLIO</a></li>
                 <li class="w3-hide-small"><a href="#contact"><i class="fa fa-envelope"></i> CONTACT</a></li>
@@ -130,6 +130,15 @@
                     x.className = x.className.replace(" w3-show", "");
                 }
             }
+          </script>
+          <script>
+          	$('a[href^="#"]').click(function(){
+            	var target = $(this).attr('href');
+
+            	$('html, body').animate({scrollTop: $(target).offset().top}, 800);
+
+            	return false;
+            });
           </script>
 
           <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>

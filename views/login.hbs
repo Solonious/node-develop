@@ -1,5 +1,6 @@
 
 <style>
+
 	.container {
 		width: 40%;
 		min-width: 200px;
@@ -7,18 +8,14 @@
 		margin: 0 auto;
 		text-align: center;
 	}
-	button {
-		font-size: .8rem;
-		margin-top: 20%;
-	}
-	button span {
-		font-family: .7rem;
+	#login:hover {
+		opacity: 0.7;
 	}
 </style>
 <div class="container">
 	<h1><b>MY BLOG</b></h1>
   		<p>Welcome to the blog of <span class="w3-tag">unknown</span></p>
-  		<button onclick="document.getElementById('id01').style.display='block'" class="w3-btn w3-hover-white">Click here to <br> <span>learn more</span></button>
+  		<a id="login" onclick="document.getElementById('id01').style.display='block'" href="#"><i class="fa fa-3x fa-user-plus" aria-hidden="true"></i></a>
 
 	<div id="id01" class="w3-modal">
     	<div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width:600px">
