@@ -6,8 +6,8 @@ var formidable = require('formidable');
 var jqupload = require('jquery-file-upload-middleware' );
 var credentials = require('./credentials');
 var compress = require('compression');
-// var morgan = require('morgan');
 var nodemailer = require('nodemailer');
+var mongoose = require('mongoose');
 
 var mailTransport = nodemailer.createTransport('SMTP',{
     service: 'Gmail',
@@ -15,6 +15,14 @@ var mailTransport = nodemailer.createTransport('SMTP',{
         user: credentials.gmail.user,
         pass: credentials.gmail.password,
     }
+});
+
+mongoose.connect(credentials.mongo.development.connectString);
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function () {
+    // we're connected!
+    console.log("Connected correctly to server");
 });
 
 var app = express();
