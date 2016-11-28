@@ -28,7 +28,8 @@
         }
      </style>
      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" >
-     <link rel="stylesheet" href="/css/style.css">
+     <link rel="stylesheet" href="css/style.css">
+	 <link rel="stylesheet" href="css/overwrite-style.css">
 
 
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js">
@@ -48,7 +49,7 @@
                 <li class="w3-hide-small"><a href="#portfolio"><i class="fa fa-th"></i> PORTFOLIO</a></li>
                 <li class="w3-hide-small"><a href="#contact"><i class="fa fa-envelope"></i> CONTACT</a></li>
                 <li class="w3-hide-small w3-right">
-                  <a href="#" class="w3-hover-red">
+                  <a href="#" onclick="document.getElementById('finder').style.display='block'" class="w3-hover-red">
                     <i class="fa fa-search"></i>
                   </a>
                 </li>
@@ -64,6 +65,23 @@
                 </ul>
               </div>
             </div>
+
+
+		      <div id="finder" class="w3-modal">
+			      <div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width:600px">
+
+				      <div class="w3-center">
+					      <span onclick="document.getElementById('finder').style.display='none'" class="w3-closebtn w3-hover-red w3-container w3-padding-8 w3-display-topright" title="Close Modal">×</span>
+				      </div>
+
+				      <form class="w3-container" action="form.asp">
+					      <div class="w3-section">
+						      <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Search" name="finder" required>
+					      </div>
+				      </form>
+
+			      </div>
+		      </div>
 
       	</header>
 

@@ -1,0 +1,11 @@
+#finder .w3-section,
+#finder .w3-margin-bottom {
+	margin-top: 8px !important;
+	margin-bottom: 8px !important;
+}
+#finder .w3-section input {
+	font-size: 12px;
+}
+#finder .w3-input {
+	width: 93%;
+}
